@@ -77,7 +77,7 @@ class CachedImage extends React.Component {
         this.renderLoader = this.renderLoader.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this._isMounted = true;
         NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
         // initial
@@ -96,9 +96,9 @@ class CachedImage extends React.Component {
         NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (!_.isEqual(this.props.source, nextProps.source)) {
-            this.processSource(nextProps.source);
+    componentDidUpdate (prevProps) {
+        if (!_.isEqual(this.props.source, prevProps.source)) {
+            this.processSource(this.props.source);
         }
     }
 
