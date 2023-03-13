@@ -41,6 +41,8 @@ function getImageProps(props) {
 
 const CACHED_IMAGE_REF = 'cachedImage';
 
+let connectionStateListenerRemover = null
+
 class CachedImage extends React.Component {
 
     static propTypes = {
@@ -75,25 +77,28 @@ class CachedImage extends React.Component {
         this.handleConnectivityChange = this.handleConnectivityChange.bind(this);
         this.processSource = this.processSource.bind(this);
         this.renderLoader = this.renderLoader.bind(this);
+
+        NetInfo.configure({ reachabilityUrl: 'https://my.pathmate.app/ping_204' })
     }
 
     componentDidMount() {
         this._isMounted = true;
-        NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
-        // initial
-        NetInfo.isConnected.fetch()
-            .then(isConnected => {
-                this.safeSetState({
-                    networkAvailable: isConnected
-                });
-            });
+
+        connectionStateListenerRemover = NetInfo.addEventListener((state) => {
+            this.handleDeviceConnectivity(state)
+        })
+
+        NetInfo.fetch().then((state) => {
+            this.handleDeviceConnectivity(state)
+        })
 
         this.processSource(this.props.source);
     }
 
     componentWillUnmount() {
         this._isMounted = false;
-        NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
+        
+        connectionStateListenerRemover()
     }
 
     componentDidUpdate (prevProps) {
@@ -131,9 +136,9 @@ class CachedImage extends React.Component {
         return this.setState(newState);
     }
 
-    handleConnectivityChange(isConnected) {
+    handleConnectivityChange(state) {
         this.safeSetState({
-            networkAvailable: isConnected
+            networkAvailable: state.isConnected
         });
     }
 
