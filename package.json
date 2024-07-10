@@ -52,7 +52,7 @@
     "lodash": "^4.17.10",
     "prop-types": "15.5.10",
     "react-native-clcasher": "https://bitbucket.org/pathmate-technologies/react-native-clcasher.git#1d7ffbff1abdfeb8784a824f37fab64efd7536e7",
-    "rn-fetch-blob": "^0.10.11",
+    "rn-fetch-blob": "0.11.2",
     "url-parse": "^1.4.1"
   },
   "devDependencies": {
